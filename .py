@@ -1,56 +1,74 @@
 # ==========================
-# SISTEMA DE POUSO - MARTE
+# SISTEMA INTEGRADO - MARTE
 # ==========================
 
-modulos = []
+energia = [20, 25, 30]
+vento = [8, 10, 12]
+consumo = 60
 
-# quantidade de módulos
-quantidade = int(input("Quantos módulos deseja cadastrar? "))
+# --------------------------
+# REGRA DE DECISÃO
+# --------------------------
 
-# cadastro dos módulos
-for i in range(quantidade):
+def decidir_acao(energia_atual, consumo_atual):
 
-    print(f"\nCadastro do módulo {i+1}")
+    if energia_atual < 30 and consumo_atual > 50:
+        return "ALERTA: reduzir consumo"
 
-    nome = input("Nome do módulo: ")
-    combustivel = int(input("Combustível (%): "))
-    prioridade = input("Prioridade (alta/media/baixa): ")
-
-    modulo = {
-        "nome": nome,
-        "combustivel": combustivel,
-        "prioridade": prioridade
-    }
-
-    modulos.append(modulo)
-
-# listas auxiliares
-pousados = []
-alerta = []
-
-# clima
-clima = input("\nClima favorável? (sim/nao): ")
-
-# verificação
-for modulo in modulos:
-
-    if modulo["combustivel"] > 25 and clima == "sim":
-
-        print(f"\n{modulo['nome']} → POUSO AUTORIZADO")
-        pousados.append(modulo)
+    elif energia_atual > consumo_atual:
+        return "SUGESTÃO: armazenar energia"
 
     else:
+        return "Sistema estável"
 
-        print(f"\n{modulo['nome']} → DECOLAGEM ABORTADA")
-        alerta.append(modulo)
+# --------------------------
+# PREVISÃO DE ENERGIA
+# --------------------------
 
-# resumo
-print("\n========== RESUMO ==========")
+def prever_energia(vento_dados, energia_dados, novo_vento):
 
-print("\nMódulos pousados:")
-for p in pousados:
-    print("-", p["nome"])
+    relacoes = []
 
-print("\nMódulos em alerta:")
-for a in alerta:
-    print("-", a["nome"])
+    for i in range(len(vento_dados)):
+        relacoes.append(energia_dados[i] / vento_dados[i])
+
+    media = sum(relacoes) / len(relacoes)
+
+    return media * novo_vento
+
+# --------------------------
+# ANÁLISE ENERGÉTICA
+# --------------------------
+
+def analisar_energia(geracao, consumo):
+
+    if consumo > geracao:
+        return "RISCO: consumo maior que geração"
+
+    else:
+        return "OK: energia suficiente"
+
+# --------------------------
+# EXECUÇÃO
+# --------------------------
+
+energia_atual = energia[-1]
+
+print("=== SISTEMA DA COLÔNIA ===")
+
+print("\nDecisão:")
+print(decidir_acao(energia_atual, consumo))
+
+vento_novo = 11
+
+energia_prevista = prever_energia(
+    vento,
+    energia,
+    vento_novo
+)
+
+print("\nPrevisão de energia:")
+print(f"Energia prevista = {round(energia_prevista, 2)}")
+
+print("\nAnálise:")
+print(analisar_energia(energia_atual, consumo))
